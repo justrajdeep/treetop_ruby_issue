@@ -1,0 +1,131 @@
+grammar Sexp
+
+  rule bodies
+    blankLine* interesting:(body+) blankLine* <Bodies>
+  end
+
+  rule body
+    commentPortString (ifdef_blocks / interface)+ (blankLine / end_of_file) <Body>
+  end
+
+  rule interface
+    space? (intf / intfWithSize) space?  newLine <Interface>
+  end
+
+  rule commentPortString
+    space? '//' space portString space?  <CommentPortString>
+  end
+
+  rule portString
+    'Port' space? '.' newLine <PortString>
+  end
+  
+  rule expression
+    space? '(' body ')' space? <Expression>
+  end
+
+  rule intf
+    (input / output) space wire:wireName space? ';' <Intf>
+  end
+
+  rule intfWithSize
+    (input / output) space? width:ifWidth space? wire:wireName space? ';' <IntfWithSize>
+  end
+
+  rule input
+    'input' <InputDir>
+  end
+
+  rule output
+    'output' <OutputDir>
+  end
+
+  rule ifdef_blocks
+    ifdef_line (interface / ifdef_block)* endif_line <IfdefBlocks>
+  end
+
+  rule ifdef_block
+    ifdef_line interface* endif_line <IfdefBlocks>
+  end
+
+  rule ifdef_line
+    space? (ifdef / ifndef) space+  allCaps space? newLine <IfdefLine>
+  end
+
+  rule endif_line
+    space? (endif) space? newLine <EndifLine>
+  end
+
+  rule ifdef
+    '`ifdef' <Ifdef>
+  end
+
+  rule ifndef
+    '`ifndef' <Ifndef>
+  end
+
+  rule endif
+    '`endif' <Endif>
+  end
+
+  rule ifWidth
+    '[' space? msb:digits space? ':' space? lsb:digits ']' <IfWidth>
+  end
+  
+  rule digits
+    [0-9]+ <Digits>
+  end
+
+  rule integer
+    ('+' / '-')? [0-9]+ <IntegerLiteral>
+  end
+  
+  rule float
+    ('+' / '-')? [0-9]+ (('.' [0-9]+) / ('e' [0-9]+)) <FloatLiteral>
+  end
+  
+  rule string
+    '"' ('\"' / !'"' .)* '"' <StringLiteral>
+  end
+
+  rule identifier
+    [a-zA-Z\=\*] [a-zA-Z0-9_\=\*]* <Identifier>
+  end
+
+  rule allCaps
+    [A-Z] [A-Z0-9_]*
+  end
+
+  rule wireName
+    [a-zA-Z] [a-zA-Z0-9_]* <WireName>
+  end
+
+  rule non_space
+    !space .
+  end
+
+  rule space
+    [^\S\n]+
+  end
+
+  rule non_space
+    !space .
+  end
+
+  rule blankLine
+    space* newLine
+  end
+
+  rule not_newLine
+    !newLine .
+  end
+
+  rule newLine
+    [\n\r]
+  end
+
+  rule end_of_file
+    !.
+  end
+
+end
