@@ -20,14 +20,6 @@ class Parser # {{{
   # {{{
   @@my_data =<<-STR
     // Port.
-    input         CLK;
-
-    // Port.
-    input         REFCLK;
-
-    // Port.
-    input [ 41:0] mem_power_ctrl;
-    output data;
   STR
   # }}}
 
